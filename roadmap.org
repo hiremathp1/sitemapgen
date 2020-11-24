@@ -1,0 +1,117 @@
+* Sitemap generation for school domains
+
+** Description
+      The input is a domain name, develop a crawler which identifies the URL and sub URL and creates a site map. 
+      Connected report: for each URL what pages are backlinking to the respected URL.
+
+** Output format
+      #+BEGIN_SRC json
+      {
+            "domain": "https://www.princetonk12.org/",
+            "schoolName": "Princeton Public School",
+            "text/content" : "---",
+            "siteMapData": {
+            "0": {
+                  "Level": 0
+                  "pageName" : "Homepage",
+                  "link" : "/index.html",
+                  "text/content" : "---",
+                  "backlinkInfo": { "--" : "--" },
+            },
+            "1": {
+                  "Level": 1
+                  "pageName" : "About Us",
+                  "link" : "/about-us",
+                  "text/content" : "---",
+                  "backlinkInfo": { "--" : "--" },
+            },
+            "2": {
+                  "Level": 2
+                  "pageName" : "The New School Year",
+                  "link" : "/district/the-new-school-year",
+                  "text/content" : "---",
+                  "backlinkInfo": { "--" : "--" },
+            },
+            ---
+            ---
+            },
+            "alexaAPIdata": {
+                  "UrlInfo" : {json converted from xml},
+                  "TrafficHistory" : {json converted from xml},
+                  "SitesLinkingIn" : {json converted from xml},
+            },
+            "linkedinAPIdata": {
+                  "city": "--",
+                  "state": "--"
+            }
+      }
+      #+END_SRC
+
+** Roadmap
+      1. Getting backlinks for generated sitemaps [60%] -> 4 days
+            - [X] *Logging module* (How to disable logging on sitemap_gen, set
+              logging file)
+            - [X] *Tests module*
+            - [X] *Sitemap generator module*
+            - [X] Use threading for parallel processing
+            - [X] Read config.json for runtime options
+            - [X] argv[1] of single url
+            - [-] *XML conversor module*
+            - [-] Xml to json conversion
+
+            > [[https://github.com/Haikson/sitemap-generator]]
+            > * [[https://github.com/c4software/python-sitemap]]
+
+
+            - [ ] Read from input file
+            - [ ] Blacklink info?
+
+      2. Alexa API integration [0%] -> 3 days
+            - [ ] *Curl http request module*
+            - [ ] *UrlInfo: generate request*
+            - [ ] TrafficHistory: generate request
+            - [ ] SitesLinkingIn: generate request
+            - [ ] Xml to json conversion
+
+            > [[https://awis.alexa.com/developer-guide/actions]]
+            > [[https://www.geeksforgeeks.org/python-xml-to-json/]]
+
+      3. LinkedIn API integration [0%] -> 3 days
+           - [ ] *LinkedIn Module*
+           - [ ] Create a search filter for the organization name            
+           - [ ] Retrieve city from linkedin API
+           - [ ] Retrieve state from linkedin API
+
+            > [[https://pypi.org/project/python-linkedin-v2/]] ???
+
+      4. REST API [0%] --> thats an extra ~ 2 days ???
+            - [ ] Accept a list of url's as request
+            - [ ] Respond dynamoDb proper Json object
+
+            > [[https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask]] ???
+
+** Architeture
+
+      config.json
+      main.py
+      requirements.txt
+      test.py
+      modules/
+       modules/alexa.py
+       modules/linkedin.py
+       modules/sitemapGen.py
+       modules/xml2json.py
+
+#+BEGIN_SRC dot
+
+digraph G {
+
+	graph [layout=dot rankdir=LR]
+	main[shape=box]
+	xml2json[shape=box]
+      {url, config} -> main -> {sitemapGen, alexaAPI,  linkedinAPI} -> xml2json -> dynamoDb
+	
+}
+
+#+END_SRC
+

@@ -1,5 +1,5 @@
 #########################################################################
-#  P N Hiremath -- 28, October of 2020                             #
+#  P N Hiremath -- 28, October of 2020                            #
 #                                                                       #
 #########################################################################
 #  Description: Sitemap generator with linkedin and alexa api           #
@@ -84,7 +84,7 @@ class Crawler:
 
     def __init__(self, num_workers=1, parserobots=False, output=None,
                  report=False, domain="", exclude=[], skipext=[], drop=[],
-                 debug=False, verbose=False, images=False, auth=False, as_index=False, max_urls_per_site=50000, input=None):
+                 debug=False, verbose=False, images=False, auth=False, as_index=False, max_urls_per_site=50000, input=None, linkedin=False, alexa=False):
         self.num_workers = num_workers
         self.parserobots = parserobots
         self.output = output
@@ -119,9 +119,17 @@ class Crawler:
             "schoolName": p.force_title,
             "text/content": "",
             "siteMapData": {},
-            "alexaAPIdata": {},
-            "linkedinAPIdata": {}
         }
+        if alexa:
+            self.json_output.update({
+            "alexaAPIdata": {},
+        })
+
+        if linkedin:
+            self.json_output.update({
+            "linkedinAPIdata": {}
+        })
+
         self.num_crawled = 0
 
         if num_workers <= 0:
@@ -333,9 +341,9 @@ class Crawler:
             self.json_output["siteMapData"][index] = {
                 "Level": level,
                 "pageName": "" if not soup.title else soup.title.get_text("\n").strip(),
-                "link": url.path,
+                "link": url.path if url.path else "/",
                 "text/content": soup.get_text("\n").strip(),
-                "backlinkInfo": {"text": "--"},
+                "backlinkInfo": [],
             }
 
         # TODO switch this to bs4
@@ -406,6 +414,7 @@ class Crawler:
                 continue
 
             self.urls_to_crawl.add(link)
+            self.json_output["siteMapData"][index]["backlinkInfo"].append(link)
 
     def write_sitemap_output(self):
         are_multiple_sitemap_files_required = \
@@ -544,7 +553,7 @@ class Crawler:
 def genMap(dict_arg, report):
     # Turns stdout off, use crawler to generate xml, convert it to a json
     ##################################################################################
-    # Using: https://github.com/Haikson/sitemap-generator - too slow
+    # too slow
     #f = tempfile.NamedTemporaryFile(delete=False, suffix=".xml")
     # f.close()
     # stdout=sys.stdout

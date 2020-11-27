@@ -48,7 +48,7 @@
       #+END_SRC
 
 ** Roadmap
-      1. Getting backlinks for generated sitemaps [60%] -> 4 days
+      1. Getting backlinks for generated sitemaps [90%] -> 4 days
             - [X] *Logging module* (How to disable logging on sitemap_gen, set
               logging file)
             - [X] *Tests module*
@@ -56,8 +56,8 @@
             - [X] Use threading for parallel processing
             - [X] Read config.json for runtime options
             - [X] argv[1] of single url
-            - [-] *XML conversor module*
-            - [-] Xml to json conversion
+            - [x] *XML conversor module*
+            - [X] Xml to json conversion
 
             > [[https://github.com/Haikson/sitemap-generator]]
             > * [[https://github.com/c4software/python-sitemap]]

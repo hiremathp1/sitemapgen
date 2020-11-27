@@ -3,6 +3,7 @@ Description: A simple sitemap generator that takes any url as a input and
 outputs a json.
 
 ![Overview](/graph.png "Architeture") *Overview*
+![Overview](/algo.png "Architeture") *Overview*
 
 ## How to install
 Setup python environment and etc..
@@ -12,6 +13,13 @@ Setup python environment and etc..
 ```
 python main.py --domain http://www.paterson.k12.nj.us/
 python main.py --input input.txt
+```
+
+When using a input file, the --output will specify an output folder, by default
+`output/`, but you can change it like:
+
+```
+python main.py --input input.txt --output crawling_result/
 ```
 
 Take a look at config.json for more options and for command line arguments use:
@@ -81,6 +89,19 @@ Read a config file to set parameters:
  python main.py --domain http://www.paterson.k12.nj.us --auth
 ```
 
+
+#### Extract Alexa Information
+
+```
+ python main.py --domain http://www.paterson.k12.nj.us --alexa [token]
+```
+
+#### Extract LinkedIn Information
+
+```
+ python main.py --domain http://www.paterson.k12.nj.us --linkedin [token]
+```
+
 ## Help
 ```
 
@@ -133,10 +154,5 @@ Config.json ....
 
 
 }
-
-```
-
-``` Copyright
-This Document belongs to Lumos Learning and developed by P N Hiremath
 
 ```

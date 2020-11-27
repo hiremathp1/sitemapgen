@@ -4,3 +4,4 @@ aiohttp
 xmltodict
 linkpreview
 bs4
+validators

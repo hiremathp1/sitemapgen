@@ -1,5 +1,5 @@
 #########################################################################
-#  P N Hiremath -- 28, October of 2020                               #
+#  P N Hiremath -- 28, October of 2020                                  #
 #                                                                       #
 #########################################################################
 #  Description: Sitemap generator with linkedin and alexa api           #

@@ -16,9 +16,11 @@
 #########################################################################
 
 import argparse
-import os
+import os, sys
 import json
 import modules.sitemapGen as sitemapGen
+from modules.alexa import alexa
+
 
 parser = argparse.ArgumentParser(description='Sitemap Generator')
 parser.add_argument('--skipext', action="append", default=[],
@@ -47,8 +49,12 @@ parser.add_argument('--images', action="store_true", default=False, required=Fal
                     help="Add image to sitemap.xml (see https://support.google.com/webmasters/answer/178636?hl=en)")
 parser.add_argument('--linkedin', action="store", default="", required=False,
                     help="Extracts and adds linkedin data to output result")
-parser.add_argument('--config', action="store", default=None,
+parser.add_argument('--alexa', action="store", default="", required=False,
                     help="Extracts and adds alexa traffic data to output result")
+parser.add_argument('--config', action="store", default=None,
+                    help="Use a different configuration json file by specifying the path")
+parser.add_argument('--test', choices=["alexa", "linkedin", "sitemap"], action="store", default=None, required=False,
+                    help="Test modules separately")
 
 group = parser.add_mutually_exclusive_group()
 group.add_argument('--domain', action="store", default="",
@@ -83,6 +89,39 @@ for argument in config:
         else:
             dict_arg[argument] = config[argument]
 del(dict_arg['config'])
+
+
+# Tests
+
+if dict_arg['test']:
+    test_domain = "https://www.haikson.com"
+    print("TESTING", dict_arg["test"].upper(), "on ", test_domain)
+
+    if dict_arg['test']=="sitemap":
+        dict_arg["domain"] = test_domain
+        dict_arg["output"] = "test.json"
+        del(dict_arg['test'])
+        sitemapGen.genMap(dict_arg, arg.report)
+        print("Saved at", dict_arg["output"])
+
+    elif dict_arg['test']=="alexa":
+        if dict_arg["alexa"]:
+            alx = alexa(dict_arg["alexa"])
+            print(alx.urlInfo(test_domain))
+            print(alx.trafficHistory(test_domain))
+            print(alx.sitesLinkingIn(test_domain))
+        else:
+            print("You need to pass in the alexa api key with the --alexa argument")
+
+    elif dict_arg['test']=="linkedin":
+        if dict_arg["linkedin"]:
+            from modules.linkedin import test
+            test(dict_arg["linkedin"])
+        else:
+            print("You need to pass in the linkedin api key with the --linkedin argument")
+    sys.exit(0)
+
+del(dict_arg['test'])
 
 
 if not dict_arg["output"] and not dict_arg["input"]:

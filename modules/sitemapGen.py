@@ -573,22 +573,7 @@ class Crawler:
 
 
 def genMap(dict_arg, report):
-    # Turns stdout off, use crawler to generate xml, convert it to a json
-    ##################################################################################
-    # Using: https://github.com/Haikson/sitemap-generator - too slow
-    #f = tempfile.NamedTemporaryFile(delete=False, suffix=".xml")
-    # f.close()
-    # stdout=sys.stdout
-    #null = open(os.devnull, 'w')
-    #sys.stdout = null
-    #crawler(root_url, out_file=f.name)
-    # with open(f.name) as xml_file:
-    #    xml_dict = xmltodict.parse(xml_file.read())
-    # f.delete=True
-    # f.close()
-    # sys.stdout=stdout
-    # return xml_dict
-    #############################################################################
+    
 
     crawl = Crawler(**dict_arg)
     crawl.run()

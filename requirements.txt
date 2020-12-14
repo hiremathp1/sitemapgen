@@ -5,3 +5,5 @@ xmltodict
 linkpreview
 bs4
 validators
+requests
+fuzzywuzzy

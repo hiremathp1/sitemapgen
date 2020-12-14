@@ -36,19 +36,21 @@
             ---
             },
             "alexaAPIdata": {
-                  "UrlInfo" : {json converted from xml},
-                  "TrafficHistory" : {json converted from xml},
-                  "SitesLinkingIn" : {json converted from xml},
+                  "UrlInfo" : {},
+                  "TrafficHistory" : {},
+                  "SitesLinkingIn" : {},
             },
             "linkedinAPIdata": {
+                  "name": "--",
                   "city": "--",
-                  "state": "--"
+                  "state": "--",
+                  "locations": []
             }
       }
       #+END_SRC
 
 ** Roadmap
-      1. Getting backlinks for generated sitemaps [90%] -> 4 days
+      1. Getting backlinks for generated sitemaps [80%] -> 4 days
             - [X] *Logging module* (How to disable logging on sitemap_gen, set
               logging file)
             - [X] *Tests module*
@@ -56,31 +58,31 @@
             - [X] Use threading for parallel processing
             - [X] Read config.json for runtime options
             - [X] argv[1] of single url
-            - [x] *XML conversor module*
-            - [X] Xml to json conversion
+            - [-] *XML conversor module*
+            - [-] Xml to json conversion
 
             > [[https://github.com/Haikson/sitemap-generator]]
             > * [[https://github.com/c4software/python-sitemap]]
 
 
-            - [ ] Read from input file
-            - [ ] Blacklink info?
+            - [X] Read from input file
+            - [X] Blacklink info?
 
-      2. Alexa API integration [0%] -> 3 days
-            - [ ] *Curl http request module*
-            - [ ] *UrlInfo: generate request*
-            - [ ] TrafficHistory: generate request
-            - [ ] SitesLinkingIn: generate request
-            - [ ] Xml to json conversion
+      2. Alexa API integration [80%] -> 3 days
+            - [X] *Curl http request module*
+            - [X] *UrlInfo: generate request*
+            - [X] TrafficHistory: generate request
+            - [X] SitesLinkingIn: generate request
+            - [-] Xml to json conversion
 
             > [[https://awis.alexa.com/developer-guide/actions]]
             > [[https://www.geeksforgeeks.org/python-xml-to-json/]]
 
-      3. LinkedIn API integration [0%] -> 3 days
-           - [ ] *LinkedIn Module*
-           - [ ] Create a search filter for the organization name            
-           - [ ] Retrieve city from linkedin API
-           - [ ] Retrieve state from linkedin API
+      3. LinkedIn API integration [100%] -> 3 days
+           - [X] *LinkedIn Module*
+           - [X] Create a search filter for the organization name
+           - [X] Retrieve city from linkedin API
+           - [X] Retrieve state from linkedin API
 
             > [[https://pypi.org/project/python-linkedin-v2/]] ???
 

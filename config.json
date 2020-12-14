@@ -1,7 +1,8 @@
 {
 	"logging": true,
 	"debug": true,
-	"loglevel": 0,
+	"verbose": true,
+	"loglevel": 20,
 	"logfile": "",
 	"crawler_user_agent": "Sitemap crawler",
 	"auth_username": "",
@@ -10,9 +11,19 @@
 		"pdf",
 		"xml"
 	],
-	"parserobots": false,
-	"max_urls_per_site": 50000,
+	"parserobots": true,
+	"max_urls_per_site": 100,
 	"exclude": [
 		"action=edit"
-	]
+	],
+
+	"alexa": {
+			"traffic_ndays": 31,
+			"results_per_page": 10,
+			"key_to_store": {"all": ["Awis", "Results", "Result", "Alexa"],
+				"urlInfo": "TrafficData",
+				"trafficHistory": "TrafficHistory",
+				"sitesLinkingIn": "SitesLinkingIn"
+			}
+	}
 }

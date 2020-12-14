@@ -21,6 +21,8 @@ import math
 from copy import deepcopy
 
 from modules import config
+from modules.alexa import alexa
+from modules.linkedin import linkedin as get_linkedin
 import logging
 from urllib.parse import urljoin, urlunparse, urlsplit, urlunsplit
 
@@ -47,7 +49,7 @@ class Crawler:
     output = None
     report = False
 
-    config = None
+    config = config.config
     domain = ""
 
     exclude = []
@@ -82,9 +84,8 @@ class Crawler:
     target_domain = ""
     scheme = ""
 
-    def __init__(self, num_workers=1, parserobots=False, output=None,
-                 report=False, domain="", exclude=[], skipext=[], drop=[],
-                 debug=False, verbose=False, images=False, auth=False, as_index=False, max_urls_per_site=50000, input=None, linkedin=False, alexa=False):
+    def __init__(self, num_workers=1, parserobots=config.parserobots, output=None,
+                 report=False, domain="", exclude=config.exclude, skipext=config.skipext, drop=[], debug=config.debug, verbose=config.verbose, images=False, auth=False, as_index=False, max_urls_per_site=config.max_urls_per_site, input=None, linkedin=False, alexa=False):
         self.num_workers = num_workers
         self.parserobots = parserobots
         self.output = output
@@ -96,9 +97,11 @@ class Crawler:
         self.debug = debug
         self.verbose = verbose
         self.images = images
-        self.auth = auth
+        self.auth = auth or config.config.auth_username
         self.as_index = as_index
         self.max_urls_per_site = max_urls_per_site
+        self.alexa = alexa
+        self.linkedin = linkedin
 
         if self.debug:
             log_level = logging.DEBUG
@@ -120,15 +123,6 @@ class Crawler:
             "text/content": "",
             "siteMapData": {},
         }
-        if alexa:
-            self.json_output.update({
-            "alexaAPIdata": {},
-        })
-
-        if linkedin:
-            self.json_output.update({
-            "linkedinAPIdata": {}
-        })
 
         self.num_crawled = 0
 
@@ -168,8 +162,10 @@ class Crawler:
                 self.__crawl(current_url)
         else:
             event_loop = asyncio.get_event_loop()
+            self.stop_msg_printed=False
             try:
-                while len(self.urls_to_crawl) != 0:
+                while len(self.urls_to_crawl) != 0 and self.num_crawled < self.max_urls_per_site:
+
                     executor = concurrent.futures.ThreadPoolExecutor(
                         max_workers=self.num_workers)
                     event_loop.run_until_complete(
@@ -178,6 +174,27 @@ class Crawler:
                 event_loop.close()
 
         logging.info("Crawling has reached end of all found links")
+
+        logging.debug("Checking for apis parameters")
+        # API's
+
+        if self.alexa:
+            logging.info("Fetching data from alexa api")
+            alx = alexa(self.alexa)
+
+            self.json_output.update({
+                "alexaAPIdata": {
+                    "UrlInfo": alx.urlInfo(self.domain),
+                    "TrafficHistory": alx.trafficHistory(self.domain),
+                    "SitesLinkingIn": alx.sitesLinkingIn(self.domain),
+                }}
+            )
+
+        if self.linkedin:
+            logging.info("Fetching data from linkedin api")
+            self.json_output.update({
+                "linkedinAPIdata": get_linkedin(self.linkedin, {"name": "school university", "domain": self.domain})
+            })
 
         self.write_sitemap_output()
 
@@ -194,6 +211,8 @@ class Crawler:
         self.urls_to_crawl.clear()
         for url in urls_to_crawl:
             self.crawled_or_crawling.add(url)
+            if self.num_crawled >= self.max_urls_per_site:
+                break
             task = event_loop.run_in_executor(executor, self.__crawl, url)
             crawl_tasks.append(task)
 
@@ -203,6 +222,10 @@ class Crawler:
         return
 
     def __crawl(self, current_url):
+        if self.num_crawled >= self.max_urls_per_site:
+            if not stop_msg_printed:
+                logging.info('Reached maximum of urls: ' +  str(self.max_urls_per_site))
+            return
         url = urlparse(current_url)
         logging.info("Crawling #{}: {}".format(self.num_crawled, url.geturl()))
         self.num_crawled += 1
@@ -260,7 +283,6 @@ class Crawler:
                     date = response.headers['Date']
 
                 date = datetime.strptime(date, '%a, %d %b %Y %H:%M:%S %Z')
-
 
             except Exception as e:
                 logging.debug("{1} ===> {0}".format(e, current_url))
@@ -553,7 +575,7 @@ class Crawler:
 def genMap(dict_arg, report):
     # Turns stdout off, use crawler to generate xml, convert it to a json
     ##################################################################################
-    # too slow
+    # Using: https://github.com/Haikson/sitemap-generator - too slow
     #f = tempfile.NamedTemporaryFile(delete=False, suffix=".xml")
     # f.close()
     # stdout=sys.stdout

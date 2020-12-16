@@ -155,6 +155,7 @@ class Crawler:
             self.check_robots()
 
         logging.info("Start the crawling process")
+        self.stop_msg_printed=False
         if self.num_workers == 1:
             while len(self.urls_to_crawl) != 0:
                 current_url = self.urls_to_crawl.pop()
@@ -162,10 +163,8 @@ class Crawler:
                 self.__crawl(current_url)
         else:
             event_loop = asyncio.get_event_loop()
-            self.stop_msg_printed=False
             try:
                 while len(self.urls_to_crawl) != 0 and self.num_crawled < self.max_urls_per_site:
-
                     executor = concurrent.futures.ThreadPoolExecutor(
                         max_workers=self.num_workers)
                     event_loop.run_until_complete(
@@ -223,7 +222,7 @@ class Crawler:
 
     def __crawl(self, current_url):
         if self.num_crawled >= self.max_urls_per_site:
-            if not stop_msg_printed:
+            if not self.stop_msg_printed:
                 logging.info('Reached maximum of urls: ' +  str(self.max_urls_per_site))
             return
         url = urlparse(current_url)
@@ -583,3 +582,5 @@ def genMap(dict_arg, report):
 
     xml_dict = crawl.json_output
     return xml_dict
+
+    

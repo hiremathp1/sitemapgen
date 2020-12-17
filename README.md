@@ -1,6 +1,6 @@
-# Lumos Learning - Sitemap Generator Copyrights reseverd by Lumos Learning.
+# Lumos Learning - Sitemap Generator .
 Description: A simple sitemap generator that takes any url as a input and
-outputs a json. Developed by Panchakshari Hiremath fron Oct 27th to Dec 22nd 2020.
+outputs a json. Developed by Panchakshari Hiremath fron Oct 27th to Dec 22nd 2020 (copyrights reseverd by Lumos Learning).
 
 ![Overview](/graph.png "Architeture") *Overview*
 ![Overview](/algo.png "Architeture") *Overview*

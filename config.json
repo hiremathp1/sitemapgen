@@ -12,7 +12,7 @@
 		"xml"
 	],
 	"parserobots": true,
-	"max_urls_per_site": 100,
+	"max_urls_per_site": 50,
 	"exclude": [
 		"action=edit"
 	],

@@ -19,6 +19,19 @@ import logging
 
 from modules.config import config
 
+URL_GROUPS = [
+"Rank",
+"RankByCountry",
+"UsageStats",
+"AdultContent",
+"Speed",
+"Language",
+"LinksInCount",
+"SiteData",
+"TrafficData",
+"ContentData",
+]
+
 
 class alexa:
 
@@ -39,17 +52,31 @@ class alexa:
                           key + " because"+str(e))
         return r
 
-    # UrlInfo
-    def urlInfo(self, domain):
-        request_domain = urlparse(domain).netloc
-        url = f"https://awis.api.alexa.com/api?Action=urlInfo&ResponseGroup=Rank&Url={request_domain}&Output=json"
+    def _get_urlfInfo_group(self, request_domain, group):
+        url = f"https://awis.api.alexa.com/api?Action=urlInfo&ResponseGroup={group}&Url={request_domain}&Output=json"
         payload = {}
         response = requests.request(
             "GET", url, headers=self.headers, data=payload)
         if config.alexa.key_to_store.urlInfo:
-            return self.process_response(response)[config.alexa.key_to_store.urlInfo]
+            i = URL_GROUPS.index(group)
+            key = config.alexa.key_to_store.urlInfo[i]
+            if key:
+                return self.process_response(response)[key]
+            else:
+                return self.process_response(response)
         else:
             return self.process_response(response)
+
+
+    # UrlInfo
+
+    def urlInfo(self, domain):
+        request_domain = urlparse(domain).netloc
+        output = {}
+        for group in URL_GROUPS:
+            output[group] = self._get_urlfInfo_group(request_domain, group)
+        return output
+
 
     # TrafficHistory
 
@@ -76,3 +103,4 @@ class alexa:
             return self.process_response(response)[config.alexa.key_to_store.sitesLinkingIn]
         else:
             return self.process_response(response)
+

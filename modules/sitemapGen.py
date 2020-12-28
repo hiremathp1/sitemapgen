@@ -31,7 +31,6 @@ from urllib.parse import urlparse
 from urllib.request import urlopen, Request
 from urllib.robotparser import RobotFileParser
 from datetime import datetime
-from linkpreview import link_preview
 from bs4 import BeautifulSoup
 import json
 
@@ -119,10 +118,10 @@ class Crawler:
         self.url_strings_to_output = []
 
         # Extract basic info
-        p = link_preview(self.domain)
+        #p = link_preview(self.domain)
         self.json_output = {
             "domain": self.domain,
-            "schoolName": p.force_title,
+            "schoolName": "",
             "text/content": "",
             "siteMapData": {},
         }
@@ -369,13 +368,14 @@ class Crawler:
             level = len(url.path[:-1].split("/"))-1
             if level == 0:
                 self.json_output["text/content"] = soup.get_text("\n").strip()
+                self.json_output["schoolName"] = soup.select_one("title").text.strip()
 
             # Fill levels keeping json in order
             level_list = list(self.json_output["siteMapData"])
             last_level = int(
                 level_list[-1]) if current_url != self.domain or len(level_list) > 0 else 0
             index = str(len(list(self.json_output["siteMapData"])))
-            # TODO add backlinkInfo
+
             self.json_output["siteMapData"][index] = {
                 "Level": level,
                 "pageName": "" if not soup.title else soup.title.get_text("\n").strip(),
@@ -589,7 +589,7 @@ class Crawler:
 
 
 def genMap(dict_arg, report):
-    
+   
 
     crawl = Crawler(**dict_arg)
     crawl.run()

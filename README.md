@@ -236,7 +236,7 @@ You can load your api keys directly from the config.json by something like:
 		"dynamoDb" : {
 			"key_id": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
 			"secretKey": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-			"region": "us-west-2",
+			"region": "XXXXXXX", // Please udpate the region(location)
 			"ReadCapacityUnits": 5,
 			"WriteCapacityUnits": 5,
       "alexa_table": "a",

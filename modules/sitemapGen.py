@@ -20,7 +20,7 @@ from copy import copy
 import math
 from copy import deepcopy
 
-from modules import config
+from modules import config, dynamoDb
 from modules.alexa import alexa
 from modules.linkedin import linkedin as get_linkedin
 import logging
@@ -84,11 +84,13 @@ class Crawler:
     target_domain = ""
     scheme = ""
 
-    def __init__(self, num_workers=1, parserobots=config.parserobots, output=None,
-                 report=False, domain="", exclude=config.exclude, skipext=config.skipext, drop=[], debug=config.debug, verbose=config.verbose, images=False, auth=False, as_index=False, max_urls_per_site=config.max_urls_per_site, input=None, linkedin=False, alexa=False):
+    def __init__(self, num_workers=0, parserobots=config.parserobots, output=None,
+                 report=False, domain="", exclude=config.exclude, skipext=config.skipext, drop=[], debug=config.debug, verbose=config.verbose, images=False, auth=False, as_index=False, max_urls_per_site=config.max_urls_per_site, input=None, linkedin=config.api_keys.linkedin if hasattr(config, "api_keys") and hasattr(config.api_keys, "linkedin") else False, alexa=config.api_keys.alexa if hasattr(config, "api_keys") and hasattr(config.api_keys, "alexa") else False, dynamoDb=config.api_keys.dynamoDb if hasattr(config, "api_keys") and hasattr(config.api_keys, "dynamoDb") else False, no = False):
+
         self.num_workers = num_workers
         self.parserobots = parserobots
         self.output = output
+        self.no_output = no
         self.report = report
         self.domain = domain
         self.exclude = exclude
@@ -102,6 +104,7 @@ class Crawler:
         self.max_urls_per_site = max_urls_per_site
         self.alexa = alexa
         self.linkedin = linkedin
+        self.dynamoDb = dynamoDb
 
         if self.debug:
             log_level = logging.DEBUG
@@ -136,6 +139,9 @@ class Crawler:
         except:
             logging.error("Invalide domain")
             raise IllegalArgumentError("Invalid domain")
+
+        if self.no_output:
+            return
 
         if self.output:
             try:
@@ -195,6 +201,15 @@ class Crawler:
             self.json_output.update({
                 "linkedinAPIdata": get_linkedin(self.linkedin, {"name": "school university", "domain": self.domain})
             })
+
+        if self.dynamoDb:
+            logging.info("Storing at dynamoDb")
+            db = dynamoDb.dynamoDbHandler(self.dynamoDb)
+            db.store(self.json_output)
+
+        if self.no_output:
+            logging.info("Skipping file output generation.")
+            return
 
         self.write_sitemap_output()
 
@@ -359,7 +374,7 @@ class Crawler:
             level_list = list(self.json_output["siteMapData"])
             last_level = int(
                 level_list[-1]) if current_url != self.domain or len(level_list) > 0 else 0
-            index = len(list(self.json_output["siteMapData"]))
+            index = str(len(list(self.json_output["siteMapData"])))
             # TODO add backlinkInfo
             self.json_output["siteMapData"][index] = {
                 "Level": level,
@@ -584,6 +599,5 @@ def genMap(dict_arg, report):
 
     xml_dict = crawl.json_output
     return xml_dict
-
 
     

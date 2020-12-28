@@ -61,9 +61,7 @@
             - [-] *XML conversor module*
             - [-] Xml to json conversion
 
-            > [[https://github.com/Haikson/sitemap-generator]]
-            > * [[https://github.com/c4software/python-sitemap]]
-
+           
 
             - [X] Read from input file
             - [X] Blacklink info?
@@ -75,8 +73,7 @@
             - [X] SitesLinkingIn: generate request
             - [-] Xml to json conversion
 
-            > [[https://awis.alexa.com/developer-guide/actions]]
-            > [[https://www.geeksforgeeks.org/python-xml-to-json/]]
+           
 
       3. LinkedIn API integration [100%] -> 3 days
            - [X] *LinkedIn Module*
@@ -84,13 +81,11 @@
            - [X] Retrieve city from linkedin API
            - [X] Retrieve state from linkedin API
 
-            > [[https://pypi.org/project/python-linkedin-v2/]] ???
+           
 
       4. REST API [0%] --> thats an extra ~ 2 days ???
-            - [ ] Accept a list of url's as request
-            - [ ] Respond dynamoDb proper Json object
-
-            > [[https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask]] ???
+            - [X] Accept a list of url's as request
+            - [X] Respond dynamoDb proper Json object
 
 ** Architeture
 

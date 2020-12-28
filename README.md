@@ -1,6 +1,6 @@
-# Lumos Learning - Sitemap Generator .
+# LUMOS LEARNING - Sitempa tool 
 Description: A simple sitemap generator that takes any url as a input and
-outputs a json. Developed by Panchakshari Hiremath fron Oct 27th to Dec 22nd 2020 (copyrights reseverd by Lumos Learning).
+outputs a json.
 
 ![Overview](/graph.png "Architeture") *Overview*
 ![Overview](/algo.png "Architeture") *Overview*
@@ -224,6 +224,53 @@ Config.json ....
 			"results_per_page": 10 // Count parameter in SitesLinkingIn: ttps://awis.alexa.com/developer-guide/actions
       "key_to_store": ["Awis", "Results", "Result", "Alexa"] // Ordered list of keys to recursively extract from API returning json
 	}
+
 }
 
 ```
+
+You can load your api keys directly from the config.json by something like:
+
+```
+  	"api_keys": {
+		"dynamoDb" : {
+			"key_id": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+			"secretKey": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+			"region": "us-west-2",
+			"ReadCapacityUnits": 5,
+			"WriteCapacityUnits": 5,
+      "alexa_table": "a",
+      "linkedin_table": "l",
+      "sitemap_table": "s"
+		},
+		"alexa": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+		"linkedin": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    }
+
+```
+
+This way you don't need to use the --alexa, --linkedin parameters
+
+
+## DynamoDb Integration notes
+
+If you specify a dynamoDb id and AWS secretKey on the config.json, you will
+also need to tell the linkedin, alexa and sitemap tables as in the last
+example. With this your database will receive the corresponding json. 
+
+When using this API you might want to add the `--no` argument to avoid any
+output json to be neeed or created on the local filesystem. This argument will
+skip the final step of writing any file to the disk. Example, just running that
+with all api's set on the config.json.
+
+``` 
+python main.py --domain https://www.nbpschools.net -n 20 --no
+```
+
+Will create the tables if they don't exist on dynamoDb and avoid creating
+a local sitemap.json file. Don't create the tables manually, let this program
+create them with the write parameters automatically. If you create you are
+advised that you are likely to have problems, so if you already have a table
+with the same name you specified on config.json, remove it.
+
+

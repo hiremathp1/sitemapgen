@@ -15,7 +15,7 @@
 #                                                                       #
 #########################################################################
 
-import argparse
+iimport argparse
 import os, sys
 import json
 import modules.sitemapGen as sitemapGen
@@ -37,6 +37,8 @@ parser.add_argument('-v', '--verbose', action="store_true",
                     help="Enable verbose output")
 parser.add_argument('--output', action="store",
                     default=None, help="Output to json file")
+parser.add_argument('--no', action="store_true",
+                    default=False, help="No output, Ommit output.")
 parser.add_argument('--as-index', action="store_true", default=False, required=False,
                     help="Outputs sitemap as index and multiple sitemap files if crawl results in more than 50,000 links (uses filename in --output as name of index file)")
 parser.add_argument('--exclude', action="append", default=[],
@@ -47,9 +49,9 @@ parser.add_argument('--report', action="store_true",
                     default=False, required=False, help="Display a report")
 parser.add_argument('--images', action="store_true", default=False, required=False,
                     help="Add image to sitemap.xml (see https://support.google.com/webmasters/answer/178636?hl=en)")
-parser.add_argument('--linkedin', action="store", default="", required=False,
+parser.add_argument('--linkedin', action="store", default=None, required=False,
                     help="Extracts and adds linkedin data to output result")
-parser.add_argument('--alexa', action="store", default="", required=False,
+parser.add_argument('--alexa', action="store", default=None, required=False,
                     help="Extracts and adds alexa traffic data to output result")
 parser.add_argument('--config', action="store", default=None,
                     help="Use a different configuration json file by specifying the path")
@@ -124,13 +126,21 @@ if dict_arg['test']:
 del(dict_arg['test'])
 
 
+if dict_arg['no']:
+    print("Ommiting file output")
 if not dict_arg["output"] and not dict_arg["input"]:
-    print("Defaulting to sitemap.json output")
+    if not dict_arg['no']:
+        print("Defaulting to sitemap.json output")
     dict_arg["output"] = "sitemap.json"
 elif not dict_arg["output"] and dict_arg["input"]:
-    print("Defaulting to sitemap folder output")
+    if not dict_arg['no']:
+        print("Defaulting to sitemap folder output")
     dict_arg["output"] = "sitemap"
 
+if not dict_arg["alexa"]:
+    del dict_arg["alexa"]
+if not dict_arg["linkedin"]:
+    del dict_arg["linkedin"]
 
 if dict_arg["input"]:
     import validators
@@ -151,3 +161,4 @@ if dict_arg["input"]:
         print("Input file not found!")
 else:
     sitemapGen.genMap(dict_arg, arg.report)
+

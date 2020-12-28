@@ -15,12 +15,9 @@
 #                                                                       #
 #########################################################################
 
-iimport argparse
+import argparse
 import os, sys
 import json
-import modules.sitemapGen as sitemapGen
-from modules.alexa import alexa
-
 
 parser = argparse.ArgumentParser(description='Sitemap Generator')
 parser.add_argument('--skipext', action="append", default=[],
@@ -67,31 +64,18 @@ group.add_argument('--input', action="store", default=None,
 
 arg = parser.parse_args()
 # Read the config file if needed
-if arg.config is not None:
-    try:
-        config_data = open(arg.config, 'r')
-        config = json.load(config_data)
-        config_data.close()
-    except Exception as e:
-        config = {}
+
+if arg.config:
+    os.environ['SITEMAP_JSON_CONFIG'] = arg.config
 else:
-    config = {}
+    os.environ['SITEMAP_JSON_CONFIG'] = "config.json"
+print("Using config: ", os.getenv('SITEMAP_JSON_CONFIG'))
 
-# Overload config with flag parameters
+import modules.sitemapGen as sitemapGen
+from modules.alexa import alexa
+
 dict_arg = arg.__dict__
-for argument in config:
-    if argument in dict_arg:
-        if type(dict_arg[argument]).__name__ == 'list':
-            dict_arg[argument].extend(config[argument])
-        elif type(dict_arg[argument]).__name__ == 'bool':
-            if dict_arg[argument]:
-                dict_arg[argument] = True
-            else:
-                dict_arg[argument] = config[argument]
-        else:
-            dict_arg[argument] = config[argument]
 del(dict_arg['config'])
-
 
 # Tests
 
@@ -161,4 +145,3 @@ if dict_arg["input"]:
         print("Input file not found!")
 else:
     sitemapGen.genMap(dict_arg, arg.report)
-
